@@ -4,100 +4,108 @@ INPUTFILE=$1
 OUTFILE=$2
 INSTANCE_ID=${RANDOM}
 FILECHECK="${INPUTFILE#*.}"
+
+#//////////////////////////////////// START OF CHECK FUNCTIONS //////////////////////////////////// 
+function InputFilenameCheck() {
+	if [[ -z $INPUTFILE ]]
+		# No it has no. Fail.
+		then
+			INPUTFILE=$(whiptail --inputbox "You have not entered an input filename. Please enter one now." 15 75 --title "Input Filename Required" 3>&1 1>&2 2>&3)
+			# SET INPUTFILE VARIABLE AND MOVE ON
+				if [[ $INPUTFILE = 0 ]]
+					then
+						echo ""
+					else
+						# How about now? Is there now an input filename to use?
+						if [[ -z $INPUTFILE ]]
+							then
+								echo "Operation1 failed due to missing input filename."
+								exit
+							else
+								echo ""
+						fi
+				fi
+
+			echo "You must enter an input filename for this script to do anything."
+		# Yes it has. Continue.
+		else
+			echo ""
+	fi
+}
+
+function OutputFilenameCheck() {
+	if [[ -z $OUTFILE ]]
+		# No it has not, prompt the user to enter an output filename.
+		then
+			SUGGESTEDNAME=${INPUTFILE%.*}
+			OUTFILE=$(whiptail --inputbox "You have not entered an output filename. Please enter one now." 15 75 $SUGGESTEDNAME-$INSTANCE_ID.ovf --title "Output Filename Required"  3>&1 1>&2 2>&3)
+			# SET OUTFILE VARIABLE AND MOVE ON
+					if [[ $OUTFILE = 0 ]]
+						then
+							echo ""
+						else
+
+							# How about now? Is there now an output filename to use?
+							if [[ -z $OUTFILE ]]
+								then
+									echo "Operation2 failed due to missing output filename."
+									exit
+								else
+									echo ""
+							fi
+					fi
+		# Yes, it has
+		else
+			echo ""
+	fi
+}
+
+function RAMAmountCheck() {
+	RAMAMT=$(whiptail --inputbox "How much RAM in megabytes should be configured for this VM?" 15 75 4096 --title "Enter RAM Amount" 3>&1 1>&2 2>&3)
+	if [[ $RAMAMT = 0 ]]
+		then
+			echo ""
+		else
+
+			# How about now? Is there now a RAM amount to use?
+			if [[ -z $RAMAMT ]]
+				then
+					echo "Operation4 failed due to missing RAM amount."
+					exit
+				else
+					echo ""
+			fi
+	fi
+}
+
+function VRAMAmountCheck() {
+	# Prompt user for how much VRAM should be used
+	VRAMAMT=$(whiptail --inputbox "How much VRAM in megabytes should be configured for this VM?" 15 75 16 --title "Enter RAM Amount" 3>&1 1>&2 2>&3)
+	if [[ $VRAMAMT = 0 ]]
+		then
+			echo "User Selected OK and entered $VRAMAMT"
+		else
+
+			# How about now? Is there now a VRAM amount to use?
+			if [[ -z $VRAMAMT ]]
+				then
+					echo "Operation4 failed due to missing VRAM amount."
+					exit
+				else
+					echo ""
+			fi
+	fi
+}
+#//////////////////////////////////// END OF CHECK FUNCTIONS //////////////////////////////////// 
+
+#//////////////////////////////////// START OF INITIAL FILE PREP ////////////////////////////////////
 # Does $INPUTFILE end with a tar.gz?
 if [[ $FILECHECK != "tar.gz" ]]
 	then
-		#Has an input filename been entered?
-		if [[ -z $INPUTFILE ]]
-			# No it has no. Fail.
-				then
-					INPUTFILE=$(whiptail --inputbox "You have not entered an input filename. Please enter one now." 15 75 --title "Input Filename Required" 3>&1 1>&2 2>&3)
-					# SET INPUTFILE VARIABLE AND MOVE ON
-						if [[ $INPUTFILE = 0 ]]
-							then
-								echo ""
-							else
-								# How about now? Is there now an input filename to use?
-								if [[ -z $INPUTFILE ]]
-									then
-										echo "Operation1 failed due to missing input filename."
-										exit
-									else
-										echo ""
-								fi
-						fi
-
-					echo "You must enter an input filename for this script to do anything."
-			# Yes it has. Continue.
-				else
-					echo ""
-		fi
-
-		# Has an output filename been entered?
-		if [[ -z $OUTFILE ]]
-		# No it has not, prompt the user to enter an output filename.
-			then
-				SUGGESTEDNAME=${INPUTFILE%.*}
-				OUTFILE=$(whiptail --inputbox "You have not entered an output filename. Please enter one now." 15 75 $SUGGESTEDNAME-$INSTANCE_ID.ovf --title "Output Filename Required"  3>&1 1>&2 2>&3)
-				# SET OUTFILE VARIABLE AND MOVE ON
-		#		OUTFILE=$?
-						if [[ $OUTFILE = 0 ]]
-							then
-								echo ""
-							else
-
-								# How about now? Is there now an output filename to use?
-								if [[ -z $OUTFILE ]]
-									then
-										echo "Operation2 failed due to missing output filename."
-										exit
-									else
-										echo ""
-								fi
-
-						fi
-			# Yes, it has
-			else
-				#OUTFILE=$(whiptail --inputbox "Confirm input filename:" 15 75 --title "Confirmation" 3>&1 1>&2 2>&3)
-				break
-		fi
-
-		# Prompt user for how much RAM should be used
-		RAMAMT=$(whiptail --inputbox "How much RAM in megabytes should be configured for this VM?" 15 75 4096 --title "Enter RAM Amount" 3>&1 1>&2 2>&3)
-			if [[ $RAMAMT = 0 ]]
-				then
-					echo ""
-				else
-
-					# How about now? Is there now a RAM amount to use?
-					if [[ -z $RAMAMT ]]
-						then
-							echo "Operation4 failed due to missing RAM amount."
-							exit
-						else
-							echo ""
-					fi
-
-			fi
-
-		# Prompt user for how much VRAM should be used
-		VRAMAMT=$(whiptail --inputbox "How much VRAM in megabytes should be configured for this VM?" 15 75 16 --title "Enter RAM Amount" 3>&1 1>&2 2>&3)
-			if [[ $VRAMAMT = 0 ]]
-				then
-					echo "User Selected OK and entered $VRAMAMT"
-				else
-
-					# How about now? Is there now a VRAM amount to use?
-					if [[ -z $VRAMAMT ]]
-						then
-							echo "Operation4 failed due to missing VRAM amount."
-							exit
-						else
-							echo ""
-					fi
-
-			fi
-		# winservtest1
+		InputFilenameCheck
+		OutputFilenameCheck
+		RAMAmountCheck
+		VRAMAmountCheck
 		SHRTOF=${OUTFILE%.*}
 		# /home/snellsg/vmware/winservtest1
 		IN_PATH=$(pwd)
@@ -126,7 +134,7 @@ if [[ $FILECHECK != "tar.gz" ]]
 		echo "Starting VM for hardware updates (required to be prevent crashing)"
 		vboxmanage startvm $SHRTOF --type headless
 		# 6. Pause while VM initializes its new hardware environment
-		# A better way is needed for this step.
+		# A better way is still needed for this step.
 		sleep 30s
 		# 7. After the first sleep is done, shut down the VM
 		# Check to see how clean this is
@@ -148,16 +156,18 @@ if [[ $FILECHECK != "tar.gz" ]]
 
 		# 10. Tar it for upload to Google
 		echo "Begin TAR/GZ compression of RAW file."
-		TARNAME=$SHRTOF.tar.GZ
-		tar -Sczf $OUT_PATH/$TARNAME $OUT_PATH/disk.raw &>/dev/null
+		TARNAME=$SHRTOF.tar.gz
+		tar -I pigz -cf $OUT_PATH/$TARNAME $OUT_PATH/disk.raw &>/dev/null
 		echo "TAR/GZ Compression complete."
 		# Conversion from VBox to RAW Complete. 
 		# Proceed to gCloud upload if desired
-
 	else
-	TARNAME=$INPUTFILE
-	whiptail --title "Previous Conversion Detected." --msgbox "$TARNAME was detected. Proceeding directly to Google Upload scripts." 8 78
+		TARNAME=$INPUTFILE
+		whiptail --title "Previous Conversion Detected." --msgbox "$TARNAME was detected. Proceeding directly to Google Upload scripts." 8 78
 fi
+#//////////////////////////////////// END OF INITIAL FILE PREP ////////////////////////////////////
+
+#//////////////////////////////////// START OF GOOGLE UPLOAD CODE //////////////////////////////////// 
 echo "TARNAME is $TARNAME"
 TRSRT=${TARNAME%.*.*}
 echo "TRSRT is set to $TRSRT"
@@ -170,7 +180,6 @@ if (whiptail --title "Upload to Google?" --yesno "All conversions have completed
 		echo "Creating new Compute Instance from gs://$BUCKET_CHOICE/$SHRTOF.tar.gz"
 		gcloud compute images create $SHRTOF --source-uri gs://$BUCKET_CHOICE/$TARNAME
 	else
-
-		# How about now? Is there now a VRAM amount to use?
 		echo "Yay, the first part made it!"
 fi
+#//////////////////////////////////// END OF GOOGLE UPLOAD CODE //////////////////////////////////// 

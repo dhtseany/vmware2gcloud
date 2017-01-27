@@ -1,0 +1,23 @@
+What is the input source for this job?
+<function(VMWareSetup)> VMWare ESXi
+<function(VMWareFileInput)> Local VMWare Files on hard disk
+<function(OVFFileInput)> Local OVF or OVA Files
+<function(targzFileInput)> Existing .tar.gz for upload to Google Compute
+
+uploadToComputeAsk:
+Are we going to be uploading our virtual machines to Google Compute?
+<uploadToComputeAsk=$?>
+<Yes: >
+<No: function(localCacheAsk)>
+
+VMWareSetuplocalCacheAsk:
+For speed and bandwidth savings in case of script failure we suggest caching a local copy of the VMWare VM. Shall we store the VM locally?
+<Yes:localCacheLocation>
+<No:Continue>
+
+VMWareSetuplocalCacheLocation:
+Please enter the location of where to store the local copy:
+[Text Box, prefilled with pwd/vmware-ex]:Continue
+
+Where do you want to store the virtualBox copy?
+[Text Box, prefilled with pwd]
