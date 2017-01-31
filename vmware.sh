@@ -53,16 +53,14 @@ function VMWareSetup() {
 	done
 }
 
-function VMWareChooseRemoteServer() {
+# function VMWareChooseRemoteServer() {
+# }
+
+# function VMWareFileInput() {
+
+# }
+
+# function VMWareExtraction() {
 
 
-}
-
-function VMWareFileInput() {
-
-}
-
-function VMWareExtraction() {
-
-
-}
+# }

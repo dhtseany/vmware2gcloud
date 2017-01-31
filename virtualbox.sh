@@ -32,7 +32,6 @@ function convertVMWaretoVBox() {
 					*) exit
 			esac
 		done
-
 }
 
 function importIntoVBox() {
