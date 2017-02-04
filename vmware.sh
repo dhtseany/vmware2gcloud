@@ -1,32 +1,26 @@
 #!/bin/bash
 
 function VMWareSetupCheck() {
-if [[ -d ~/.config/vmware2gcloud ]]
-    then
-        if [[ -s ~/.config/vmware2gcloud/VMWareSetup.cache ]]
-            then
-                VMWareReuseSetupFile=$(dialog --backtitle "vmware2gcloud -> VMWare ESXi Setup" \
-                --yesno "Previously created setup file was detected. \
-                Continue with detected setup file?" 20 75 3>&1 1>&2 2>&3
-                )
-                if [[ $VMWareReuseSetupFile = yes ]]
-                    then
-                        source ~/.config/vmware2gcloud/VMWareSetup.cache
-                        VMWareChooseRemoteServer
-                    else
-                        dialog --title "Setup File Not Found" 20 10
-                        VMWareSetupMenu
-                fi
-            else
-                dialog --backtitle "vmware2gcloud -> VMWare ESXi Setup" \
-                "No setup file found. Proceeding to Setup Menu." 20 75
-                touch ~/.config/vmware2gcloud/VMWareSetup.cache
-                VMWareSetup
-        fi
-    else    
-        mkdir -p ~/.config/vmware2gcloud
-        VMWareSetupCheck
-fi
+    if [[ -s ~/.config/vmware2gcloud/VMWareSetup.cache ]]
+        then
+            VMWareReuseSetupFile=$(dialog --backtitle "vmware2gcloud -> VMWare ESXi Setup" \
+            --yesno "Previously created setup file was detected. \
+            Continue with detected setup file?" 20 75 3>&1 1>&2 2>&3
+            )
+            if [[ $VMWareReuseSetupFile = yes ]]
+                then
+                    source ~/.config/vmware2gcloud/VMWareSetup.cache
+                    VMWareChooseRemoteServer
+                else
+                    dialog --title "Setup File Not Found" 20 10
+                    VMWareSetupMenu
+            fi
+        else
+            dialog --backtitle "vmware2gcloud -> VMWare ESXi Setup" \
+            "No setup file found. Proceeding to Setup Menu." 20 75
+            touch ~/.config/vmware2gcloud/VMWareSetup.cache
+            VMWareSetup
+    fi
 }
 
 function VMWareSetup() {

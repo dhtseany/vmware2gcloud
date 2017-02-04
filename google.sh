@@ -24,7 +24,7 @@ function uploadToGoogle() {
     echo "TARNAME is $TARNAME"
     TRSRT=${TARNAME%.*.*}
     echo "TRSRT is set to $TRSRT"
-    if (whiptail --title "Upload to Google?" --yesno "All conversions have completed successfuly. We are now ready to push this RAW VM up to Google Compute. Shall we continue?" 8 78)
+    if $(whiptail --title "Upload to Google?" --yesno "All conversions have completed successfuly. We are now ready to push this RAW VM up to Google Compute. Shall we continue?" 8 78)
         then
             BUCKET_CHOICE=$(whiptail --title "Verify Bucket Choice" --inputbox "Verify bucket to upload to:" 15 75 cmh-custom-utilities.appspot.com 3>&1 1>&2 2>&3)
             echo "BUCKET_CHOICE was set to gs://$BUCKET_CHOICE"
