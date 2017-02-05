@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./dump.sh
 
 function VBoxOSTypeSelect() {
 	VBoxOSList=$(vboxmanage list ostypes | grep ^ID | sed -e 's/^ID:          //')
@@ -19,43 +20,35 @@ function VBoxOSTypeSelect() {
 }
 
 function VirtualBoxReceivePrep() {
-	INTYPE=$1
-	OUTTYPE=$2
+	# INTYPE=$1
+	# OUTTYPE=$2
 #	echo "OUTFILE is set to $OUTFILE"
 	RAMAmountCheck
 	VRAMAmountCheck
 	chooseVBoxOSType
-	STRPOPATH=${OUTFILE##*/}
-	SHRTOF=${STRPOPATH%.*}
 	# echo "SHRTOF is set to $SHRTOF"
 	# exit
 	# /home/snellsg/vmware/winservtest1
 	# echo $IN_PATH
 	# exit
 	# /home/snellsg/vmware/winservtest1/winservtest1-{random}
-	OUT_PATH=$IN_PATH/$SHRTOF-converted
+	# You moved the next line to the OutputFilenameCheck function
+	# STRPOPATH=${OUTFILE##*/}
+	# SHRTOF=${STRPOPATH%.*}
+	# OUT_PATH=$IN_PATH/$SHRTOF-$OUTTYPE-converted
 	# Perform VMware -> VitrualBox conversion
 	# Create the new output folder and cd into it
-	echo "OUT_PATH is set to $OUT_PATH"
+	# echo "OUT_PATH is set to $OUT_PATH"
 	mkdir $OUT_PATH
 	# convertVMWaretoVBox $1
-	echo "INTYPE is set to $INTYPE"
-	# for INTYPE in $INTYPE
-	# 	do
-	# 		case "$INTYPE" in
-	# 			localRaw) RAWtoVBoxConversion $INTYPE $OUTTYPE
-	# 			;;
-	# 			localVMWare) convertVMWaretoVBox $INTYPE $OUTTYPE
-	# 			;;
-	# 			*) exit
-	# 		esac
-	# done
+	# echo "INTYPE is set to $INTYPE"
+	
 	#chooseVBoxOSType $INTYPE $OUTTYPE
 }
 
 function chooseVBoxOSType() {
-	INTYPE=$1
-	OUTTYPE=$2
+	# INTYPE=$1
+	# OUTTYPE=$2
 	VBoxOSTypeChoice=$(dialog --backtitle "vmware2gcloud" --title "Choose OS Type" --inputbox "Which OSType should be used for this converted VM?" 15 75 "ArchLinux_64" 3>&1 1>&2 2>&3)
 	### I think i want this chunk for the next function, not here
 	# if [[ $ INTYPE = "LocalRaw" ]]
@@ -80,30 +73,26 @@ function createVBoxOSTypes() {
 }
 
 function convertVMWaretoVBox() {
-	INTYPE=$1
-	OUTTYPE=$2
-	# Convert VMX to OVF
+	# INTYPE=$1
+	# OUTTYPE=$2
+	# # Convert VMX to OVF
 	dialog --backtitle "vmware2gcloud" --infobox "Converting from VMware format to VMware Open Virtualization Format..." 15 75
 	# ovftool $IN_PATH/$INPUTFILE $OUT_PATH/$OUTFILE
 	ovftool $INPUTFILE $OUT_PATH/$OUTFILE
-	# Import OVF File with adjustments
-	for OUTTYPE in $OUTTYPE
-		do
-			case "$OUTTYPE" in
-				VBoxInstall) importIntoVBox
-				;;
-				saveToFileSystem) exit
-				;;
-				*) exit
-			esac
-	done
+		ovftoolCheck=$?
+		dump
+	# Import OVF File with adjustments	
 }
 
 function RAWtoVBoxConversion() {
-	INTYPE=$1
-	OUTTYPE=$2
-	dialog --backtitle "vmware2gcloud" --infobox "Converting from RAW to VMDK..." 15 75
-    vboxmanage convertfromraw $INPUTFILE $OUTFILE/$OUTPUTFILE --format VMDK
+	# INTYPE=$1
+	# OUTTYPE=$2
+	# dialog --backtitle "vmware2gcloud" --infobox "Converting from RAW to VMDK..." 15 75
+    # echo "INPUTFILE is $INPUTFILE"
+	# echo "OUT_PATH is $OUT_PATH"
+	# echo "OUTFILE is $OUTFILE"
+	# exit
+	vboxmanage convertfromraw $INPUTFILE $OUT_PATH/$OUTPUTFILE --format VMDK
 	# echo "Command that was about to be run was:"
 	# echo "vboxmanage convertfromraw $INPUTFILE $OUT_PATH/$OUTFILE --format VMDK"
 }
@@ -128,10 +117,4 @@ function importIntoVBox() {
 		dialog --backtitle "vmware2gcloud" --infobox "Shutdown command has been sent."
 		# Sleep again in case the VM needs a moment to finish shutting self down
 		sleep 20s
-		if [[ $OUTTYPE = "VBoxInstall" ]] 
-			then
-				exit
-			else
-				echo &>/dev/null
-		fi
 }

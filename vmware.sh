@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./dump.sh
 
 function VMWareSetupCheck() {
     if [[ -s ~/.config/vmware2gcloud/VMWareSetup.cache ]]
